@@ -19,7 +19,18 @@ font-size: 22.36px;
 }
 
 .title {
-  margin-top:50px;
+  height: 35%;
+  margin-top:30px;
+}
+
+.subtitles {
+  height: 20%;
+  margin-top:60px;
+  padding-right:30px;
+}
+
+a:hover{
+  color: #BC000A;
 }
 
 body {
@@ -27,25 +38,38 @@ body {
   color: #DDD;
   line-height: 31px;
   width: 100%;
+  margin: 0px;
 
 }
 
+canvas{
+  width: 100%;
+  height: 100%;
+}
+
+.container{
+  position:fixed;
+  height:200px;
+  width:100%
+}
+
 #Header{
-  width: 400px;
-  height: 125px;
+  width: 420px;
+  height: 145px;
   border: 3px ridge white;
-  display: flex;
   justify-content: center;
-  margin: 0px auto;
+  margin: 15px auto;
+  background-color: #0c0c0c;
 }
 
 
 
 #soldiers{
   width: 100%;
-  height: 450px;
-  display: inline-bl45k;
+  height: 100%;
+  display: inline-block;
   overflow: hidden;
+  position: absolute;
 
 }
 
@@ -60,7 +84,7 @@ body {
 
 }
 
-#Footer{
+/*#Footer{
   width: 100%;
   height: 100px;
   display: inline-block;
@@ -68,19 +92,32 @@ body {
   padding-top: 50px;
   margin: 0px auto;
 }
+*/
 
 
-
-@media only screen and (max-width: 390px) {
+@media only screen and (max-width: 400px) {
   body {
-    width: fit-content
+    /*width: fit-content*/
   }
 
   #Header{
-    margin: 0px, 0px;
+    width: 100%;
+
+  }
+
+  h1{
+  font-size: 30px;
   }
 
   h2{
-  font-size: 24.36px;
+  font-size: 16.36px;
+  }
+
+  .title {
+    height: 35%;
+    margin-top:30px;
+  }
+  .subtitles a {
+    padding-right:10px;
   }
 }
