@@ -1,103 +1,138 @@
-// variables
 
-var colors = [
-  '#D00',
-  '#DD0',
-  '#0DD',
-  '#22D',
-  '#D0D'
-];
-
-var scores = [
- /* ['TAB','1991-03-03','12345'] */
-];
-
-var topscore = 13000;
-
-// insert entry
-
-function insertEntry(entry) {
-  scores.push(entry);
-
-  document.getElementById('highscores').innerHTML = '<tr><th>[NAME]</th><th>[DATE]</th><th>[SCORE]</th></tr>';
-  document.getElementById('chart').innerHTML = '';
-
-  for (var i=0; i < scores.length; i++) {
-    color = colors[i%colors.length];
-
-    var bar = document.createElement('div');
-    bar.className = 'bar';
-    bar.style.width = scores[i][2] / topscore * 100 + '%';
-    bar.style.backgroundColor = color;
-    document.getElementById('chart').appendChild(bar);
-
-    var row = document.createElement('tr');
-    row.style.color = color;
-    row.innerHTML += '<td>' + scores[i][0] + '</td>';
-    row.innerHTML += '<td>' + scores[i][1] + '</td>';
-    row.innerHTML += '<td>' + scores[i][2] + '</td>';
-    document.getElementById('highscores').appendChild(row);
-  }
-}
-
-// submit button
-
-document.querySelector('#addscore a').addEventListener('click', function() {
-  var entry = [
-   document.getElementById('name').value,
-   document.getElementById('date').value,
-   document.getElementById('score').value
-  ];
-
-  document.querySelector('#addscore .alert').innerHTML = '';
-
-  if (entry[0] == '') {
-    document.querySelector('#addscore .alert').innerHTML = 'RE-ENTER NAME!';
-  }
-  else if (entry[1].search(/[0-9]{4}-[0-9]{2}-[0-9]{2}/) == -1) {
-    document.querySelector('#addscore .alert').innerHTML = 'RE-ENTER DATE!';
-  }
-  else if (entry[2].search(/^[0-9]*$/) < 0 || entry[2] == '') {
-    document.querySelector('#addscore .alert').innerHTML = 'RE-ENTER SCORE!';
-  }
-  else {
-    var req = new XMLHttpRequest();
-    req.onreadystatechange = function(){
-      if (this.readyState == 4 && this.status == 200){
-            insertEntry(entry);
-      }
-
-      else {
-          console.log(this.readyState, this.status)//handling errors
-      }
-    }
-    req.open('POST', 'scores', true);
-    req.setRequestHeader('Content-type','application/json');
-    body = JSON.stringify(entry);
-    req.send(body);
-  }
-});
-
-//load scores
-
-var req = new XMLHttpRequest(); // Makes AJAX Possible
-req.onreadystatechange = function(){
-  if (this.readyState == 4 && this.status == 200){
-    var json = JSON.parse(req.responseText);
-    console.log(json);
-
-    for (var i = 0; i<json.length; i++){
-      insertEntry([
-        json[i][1],
-        json[i][2],
-        json[i][3],
-      ])
-    } //good for generating-stuff
-  }
-  else {
-    console.log(this.readyState, this.status)//handling errors
-  }
-}
-
-req.open('GET', '/scores', true);
-req.send();
+			import * as THREE from '../build/three.module.js';
+			import Stats from './jsm/libs/stats.module.js';
+			import { TrackballControls } from './jsm/controls/TrackballControls.js';
+			import { BufferGeometryUtils } from './jsm/utils/BufferGeometryUtils.js';
+			var container, stats;
+			var camera, controls, scene, renderer;
+			var pickingData = [], pickingTexture, pickingScene;
+			var highlightBox;
+			var mouse = new THREE.Vector2();
+			var offset = new THREE.Vector3( 10, 10, 10 );
+			init();
+			animate();
+			function init() {
+				container = document.getElementById( "soldiers" );
+				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 1000;
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0x050505 );
+				pickingScene = new THREE.Scene();
+				pickingTexture = new THREE.WebGLRenderTarget( 1, 1 );
+				scene.add( new THREE.AmbientLight( 0xDD5555 ) );
+				var light = new THREE.SpotLight( 0xffffff, 1.5 );
+				light.position.set( 0, 500, 2000 );
+				scene.add( light );
+				var pickingMaterial = new THREE.MeshBasicMaterial( { vertexColors: THREE.VertexColors } );
+				var defaultMaterial = new THREE.MeshPhongMaterial( { color: 0xDD0000, flatShading: true, vertexColors: THREE.VertexColors, shininess: 0	} );
+				function applyVertexColors( geometry, color ) {
+					var position = geometry.attributes.position;
+					var colors = [];
+					for ( var i = 0; i < position.count; i ++ ) {
+						colors.push( color.r, color.g, color.b );
+					}
+					geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
+				}
+				var geometriesDrawn = [];
+				var geometriesPicking = [];
+				var matrix = new THREE.Matrix4();
+				var quaternion = new THREE.Quaternion();
+				var color = new THREE.Color();
+				for ( var i = 0; i < 5000; i ++ ) {
+					var geometry = new THREE.BoxBufferGeometry();
+					var position = new THREE.Vector3();
+					position.x = Math.random() * 10000 - 5000;
+					position.y = Math.random() * 6000 - 3000;
+					position.z = Math.random() * 8000 - 4000;
+					var rotation = new THREE.Euler();
+					rotation.x = Math.random() * 2 * Math.PI;
+					rotation.y = Math.random() * 2 * Math.PI;
+					rotation.z = Math.random() * 2 * Math.PI;
+					var scale = new THREE.Vector3();
+					scale.x = Math.random() * 200 + 100;
+					scale.y = Math.random() * 200 + 100;
+					scale.z = Math.random() * 200 + 100;
+					quaternion.setFromEuler( rotation );
+					matrix.compose( position, quaternion, scale );
+					geometry.applyMatrix( matrix );
+					// give the geometry's vertices a random color, to be displayed
+					applyVertexColors( geometry, color.setHex( Math.random() * 0xDD0000 ) );
+					geometriesDrawn.push( geometry );
+					geometry = geometry.clone();
+					// give the geometry's vertices a color corresponding to the "id"
+					applyVertexColors( geometry, color.setHex( i ) );
+					geometriesPicking.push( geometry );
+					pickingData[ i ] = {
+						position: position,
+						rotation: rotation,
+						scale: scale
+					};
+				}
+				var objects = new THREE.Mesh( BufferGeometryUtils.mergeBufferGeometries( geometriesDrawn ), defaultMaterial );
+				scene.add( objects );
+				pickingScene.add( new THREE.Mesh( BufferGeometryUtils.mergeBufferGeometries( geometriesPicking ), pickingMaterial ) );
+				highlightBox = new THREE.Mesh(
+					new THREE.BoxBufferGeometry(),
+					new THREE.MeshLambertMaterial( { color: 0xffff00 }
+					) );
+				scene.add( highlightBox );
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+				controls = new TrackballControls( camera, renderer.domElement );
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+				controls.noZoom = false;
+				controls.noPan = false;
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0.3;
+				stats = new Stats();
+				container.appendChild( stats.dom );
+				renderer.domElement.addEventListener( 'mousemove', onMouseMove );
+			}
+			//
+			function onMouseMove( e ) {
+				mouse.x = e.clientX;
+				mouse.y = e.clientY;
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+				stats.update();
+			}
+			function pick() {
+				//render the picking scene off-screen
+				// set the view offset to represent just a single pixel under the mouse
+				camera.setViewOffset( renderer.domElement.width, renderer.domElement.height, mouse.x * window.devicePixelRatio | 0, mouse.y * window.devicePixelRatio | 0, 1, 1 );
+				// render the scene
+				renderer.setRenderTarget( pickingTexture );
+				renderer.render( pickingScene, camera );
+				// clear the view offset so rendering returns to normal
+				camera.clearViewOffset();
+				//create buffer for reading single pixel
+				var pixelBuffer = new Uint8Array( 4 );
+				//read the pixel
+				renderer.readRenderTargetPixels( pickingTexture, 0, 0, 1, 1, pixelBuffer );
+				//interpret the pixel as an ID
+				var id = ( pixelBuffer[ 0 ] << 16 ) | ( pixelBuffer[ 1 ] << 8 ) | ( pixelBuffer[ 2 ] );
+				var data = pickingData[ id ];
+				if ( data ) {
+					//move our highlightBox so that it surrounds the picked object
+					if ( data.position && data.rotation && data.scale ) {
+						highlightBox.position.copy( data.position );
+						highlightBox.rotation.copy( data.rotation );
+						highlightBox.scale.copy( data.scale ).add( offset );
+						highlightBox.visible = true;
+					}
+				} else {
+					highlightBox.visible = false;
+				}
+			}
+			function render() {
+				controls.update();
+				pick();
+				renderer.setRenderTarget( null );
+				renderer.render( scene, camera );
+			}
