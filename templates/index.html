@@ -17,7 +17,10 @@
 
     </div>
 
-    <div id="soldiers"></div>
+    <div id="soldiers">
+      <div id="soldierInfo">
+      </div>
+    </div>
 
     <div id="Footer">
 
@@ -26,10 +29,48 @@
 
     </div>
 
-    <div id="SoldierInfo">
-    </div>
 
-    <script src="{{ url_for('static', filename='js.js') }}"></script>
+
+
+    <script src="{{ url_for('static', filename='soldiers.js') }}"></script>
+  <!--    trying to test basic threejs
+  <script src="js/three.js"></script>
+  <script>
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+      renderer = new THREE.CanvasRenderer();
+      var container = document.getElementById('soldiers');
+      var w = container.offsetWidth;
+      var h = container.offsetHeight;
+      renderer.setSize(w, h);
+      container.appendChild(renderer.domElement);
+
+
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			var material = new THREE.MeshBasicMaterial( { color: 0xFF0000 } );
+			var cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+
+      var geometryS = new THREE.SphereGeometry( 5, 32, 32 );
+      var materialS = new THREE.MeshBasicMaterial( {color: 0xffffff} );
+      var sphere = new THREE.Mesh( geometryS, materialS );
+      scene.add( sphere );
+
+			camera.position.z = 5;
+
+			var animate = function () {
+				requestAnimationFrame( animate );
+
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+		</script>
+   -->
 
   </body>
 

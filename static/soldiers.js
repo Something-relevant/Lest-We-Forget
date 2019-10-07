@@ -1,5 +1,38 @@
+var req = new XMLHttpRequest(); // Makes AJAX Possible
+req.onreadystatechange = function(){
+  if (this.readyState == 4 && this.status == 200){
+    var json = JSON.parse(req.responseText);
+    console.log(json);
 
-			import * as THREE from '../build/three.module.js';
+    for (var i = 0; i<json.length; i++){
+      insertEntry([
+        json[i][1],
+        json[i][2],
+        json[i][3],
+        json[i][4],
+    ]} //good for generating-stuff
+
+      ])
+    } //good for generating-stuff
+  }
+  else {
+    console.log(this.readyState, this.status)//handling errors
+  }
+}
+
+req.open('GET', '/soldiers', true);
+req.send();
+
+
+
+
+
+
+// Three JS
+
+
+      import { WEBGL } from 'three/examples/jsm/WebGL.js';
+      import * as THREE from '../build/three.module.js';
 			import Stats from './jsm/libs/stats.module.js';
 			import { TrackballControls } from './jsm/controls/TrackballControls.js';
 			import { BufferGeometryUtils } from './jsm/utils/BufferGeometryUtils.js';
@@ -13,7 +46,7 @@
 			animate();
 			function init() {
 				container = document.getElementById( "soldiers" );
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera = new THREE.PerspectiveCamera( 70, container.innerWidth / container.innerHeight, 1, 10000 );
 				camera.position.z = 1000;
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0x050505 );

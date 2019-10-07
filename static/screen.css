@@ -7,6 +7,7 @@
 
 h1, h2, h3 {
   font-family: 'Rufina', serif;
+  text-align: center;
 }
 
 h1{
@@ -25,39 +26,61 @@ body {
   background-color: #000000;
   color: #DDD;
   line-height: 31px;
+  width: 100%;
 
 }
-
 
 #Header{
-  width: 100%;
+  width: 400px;
   height: 125px;
-  display: inline-block;
-  border-bottom: 3px solid white;
-  text-align: center;
-  margin: 0 auto;
+  border: 3px ridge white;
+  display: flex;
+  justify-content: center;
+  margin: 0px auto;
 }
+
+
 
 #soldiers{
   width: 100%;
+  height: 450px;
+  display: inline-bl45k;
+  overflow: hidden;
+
+}
+
+#soldierInfo{
+  width: 400PX;
   height: 420px;
-  display: inline-block;
+  margin: 0px auto;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  background-color: red;
 
 }
 
 #Footer{
-  width: 400px;
-  height: 125px;
+  width: 100%;
+  height: 100px;
   display: inline-block;
-  border: 3px solid white;
-  display: flex;
-  align-items: center;
-  justify-content: center
+  border-top: 3px ridge white;
+  padding-top: 50px;
+  margin: 0px auto;
 }
 
 
-@media only screen and (max-width: 600px) {
+
+@media only screen and (max-width: 390px) {
   body {
-    /*background-position: -46px 17px;*/
+    width: fit-content
+  }
+
+  #Header{
+    margin: 0px, 0px;
+  }
+
+  h2{
+  font-size: 24.36px;
   }
 }
