@@ -12,16 +12,18 @@
 
   <body>
 
+
+
+    <div id="soldiers" style="height:100%">
+<!--      <div id="soldierInfo">
+</div>-->
+    </div>
+
     <div class='container'>
       <div id="Header">
         <h1 class='title'>Lest We Forget<br/></h1>
         <h2><a>1914</a> - <a>1915</a> - <a>1916</a> - <a>1917</a> - <a>1918</a><h2>
       </div>
-    </div>
-
-    <div id="soldiers" style="height:100%">
-<!--      <div id="soldierInfo">
-</div>-->
     </div>
 
   <!--  <div id="Footer">
@@ -38,7 +40,8 @@
     -->
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js"></script>
-    <script src="{{ url_for('static', filename='soldiers.js') }}"></script>
+    <script src="{{ url_for('static', filename='three.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='soldiers.js') }}" type="module"></script>
   <!--    trying to test basic threejs
   <script src="js/three.js"></script>
   <script>
