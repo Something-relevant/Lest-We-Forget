@@ -15,180 +15,6 @@ var soldiers1918 = [];
 
 var allSoldiers = [];
 
-
-function insertEntry(array, entry){
-  array.push(entry);
-}
-
-function poppys(array){
-
-}
-
-function soldierDetails(selectedArray){
-
-  var infobox = document.createElement('div');
-  infobox.className = 'soldierInfo';
-  document.getElementById('soldier').appendChild(infobox);
-
-  var info = document.createElement('tr');
-  row.innerHTML += '<td>' + '<h2>' +  selectedArray[i][0] + '  ' + selectedArray[i][1] + '</h2>' + '</td>';
-  row.innerHTML += '<td>' + 'Age :' + '  ' +  selectedArray[i][2] +  '</td>';
-  row.innerHTML += '<td>' + 'D.O.D :' + '  ' +  selectedArray[i][3] +  '</td>';
-  row.innerHTML += '<td>' + 'rank :' + '  ' +   selectedArray[i][4] +  '</td>';
-  row.innerHTML += '<td>' +  selectedArray[i][5] + '</td>';
-
-  document.getElementById('infobox').appendChild(info);
-
-}
-
-//three.js
-import * as THREE from './build/three.module.js';
-import Stats from './jsm/libs/stats.module.js';
-import { TrackballControls } from './jsm/controls/TrackballControls.js';
-import { BufferGeometryUtils } from './jsm/utils/BufferGeometryUtils.js';
-
-			var container, stats;
-			var camera, controls, scene, renderer;
-			var pickingData = [], pickingTexture, pickingScene;
-			var highlightBox;
-			var mouse = new THREE.Vector2();
-			var offset = new THREE.Vector3( 10, 10, 10 );
-
-			init();
-			animate();
-			function init() {
-
-				container = document.getElementById( "soldiers" );
-				camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
-				camera.position.z = 1000;
-				scene = new THREE.Scene();
-				scene.background = new THREE.Color( 0x000000 );
-				pickingScene = new THREE.Scene();
-				pickingTexture = new THREE.WebGLRenderTarget( 1, 1 );
-				scene.add( new THREE.AmbientLight( 0x553333,1.5 ) );
-				var light = new THREE.SpotLight( 0xffeeee, 1.5S );
-				light.position.set( 0, 500, 2000 );
-				scene.add( light );
-				var pickingMaterial = new THREE.MeshBasicMaterial( { vertexColors: THREE.VertexColors } );
-				var defaultMaterial = new THREE.MeshPhongMaterial( { color: 0xffffff, flatShading: true, vertexColors: THREE.VertexColors, shininess: 0	} );
-				function applyVertexColors( geometry, color ) {
-					var position = geometry.attributes.position;
-					var colors = [];
-					for ( var i = 0; i < position.count; i ++ ) {
-						colors.push( color.r, color.g, color.b );
-					}
-					geometry.addAttribute( 'color', new THREE.Float32BufferAttribute( colors, 1 ) );
-				}
-				var geometriesDrawn = [];
-				var geometriesPicking = [];
-				var matrix = new THREE.Matrix4();
-				var quaternion = new THREE.Quaternion();
-				var color = new THREE.Color();
-				for ( var i = 0; i < 5000; i ++ ) {
-					var geometry = new THREE.BoxBufferGeometry();
-					var position = new THREE.Vector3();
-					position.x = Math.random() * 12000 - 5000;
-					position.y = Math.random() * 18000 - 3000;
-					position.z = Math.random() * 19000 - 4000;
-					var rotation = new THREE.Euler();
-					rotation.x = Math.random() * 2 * Math.PI;
-					rotation.y = Math.random() * 2 * Math.PI;
-					rotation.z = Math.random() * 2 * Math.PI;
-					var scale = new THREE.Vector3();
-					scale.x = Math.random() * 200 + 100;
-					scale.y = Math.random() * 200 + 100;
-					scale.z = Math.random() * 200 + 100;
-					quaternion.setFromEuler( rotation );
-					matrix.compose( position, quaternion, scale );
-					geometry.applyMatrix( matrix );
-					// give the geometry's vertices a random color, to be displayed
-					applyVertexColors( geometry, color.setHex( Math.random() * 0xffffff ) );
-					geometriesDrawn.push( geometry );
-					geometry = geometry.clone();
-					// give the geometry's vertices a color corresponding to the "id"
-					applyVertexColors( geometry, color.setHex( i ) );
-					geometriesPicking.push( geometry );
-					pickingData[ i ] = {
-						position: position,
-						rotation: rotation,
-						scale: scale
-					};
-				}
-				var objects = new THREE.Mesh( BufferGeometryUtils.mergeBufferGeometries( geometriesDrawn ), defaultMaterial );
-				scene.add( objects );
-				pickingScene.add( new THREE.Mesh( BufferGeometryUtils.mergeBufferGeometries( geometriesPicking ), pickingMaterial ) );
-				highlightBox = new THREE.Mesh(
-					new THREE.BoxBufferGeometry(),
-					new THREE.MeshLambertMaterial( { color: 0xffff00 }
-					) );
-				scene.add( highlightBox );
-				renderer = new THREE.WebGLRenderer( { antialias: true } );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				container.appendChild( renderer.domElement );
-				controls = new TrackballControls( camera, renderer.domElement );
-				controls.rotateSpeed = 1.0;
-				controls.zoomSpeed = 1.2;
-				controls.panSpeed = 0.8;
-				controls.noZoom = false;
-				controls.noPan = false;
-				controls.staticMoving = true;
-				controls.dynamicDampingFactor = 0.3;
-				stats = new Stats();
-				container.appendChild( stats.dom );
-				renderer.domElement.addEventListener( 'mousemove', onMouseMove );
-			}
-			//
-			function onMouseMove( e ) {
-				mouse.x = e.clientX;
-				mouse.y = e.clientY;
-			}
-			function animate() {
-				requestAnimationFrame( animate );
-				render();
-				stats.update();
-			}
-			function pick() {
-				//render the picking scene off-screen
-				// set the view offset to represent just a single pixel under the mouse
-				camera.setViewOffset( renderer.domElement.width, renderer.domElement.height, mouse.x * window.devicePixelRatio | 0, mouse.y * window.devicePixelRatio | 0, 1, 1 );
-				// render the scene
-				renderer.setRenderTarget( pickingTexture );
-				renderer.render( pickingScene, camera );
-				// clear the view offset so rendering returns to normal
-				camera.clearViewOffset();
-				//create buffer for reading single pixel
-				var pixelBuffer = new Uint8Array( 4 );
-				//read the pixel
-				renderer.readRenderTargetPixels( pickingTexture, 0, 0, 1, 1, pixelBuffer );
-				//interpret the pixel as an ID
-				var id = ( pixelBuffer[ 0 ] << 16 ) | ( pixelBuffer[ 1 ] << 8 ) | ( pixelBuffer[ 2 ] );
-				var data = pickingData[ id ];
-				if ( data ) {
-					//move our highlightBox so that it surrounds the picked object
-					if ( data.position && data.rotation && data.scale ) {
-						highlightBox.position.copy( data.position );
-						highlightBox.rotation.copy( data.rotation );
-						highlightBox.scale.copy( data.scale ).add( offset );
-						highlightBox.visible = true;
-					}
-				} else {
-					highlightBox.visible = false;
-				}
-			}
-			function render() {
-				controls.update();
-				pick();
-				renderer.setRenderTarget( null );
-				renderer.render( scene, camera );
-			}
-
-
-
-
-
-
-//for showing data, make three seperate renders of three.js and then call each one depending on true or false of class
 var req = new XMLHttpRequest(); // Makes AJAX Possible
 
 
@@ -276,7 +102,14 @@ req.onreadystatechange = function(){
         json[i].additionalinformation,
       ]);
         console.log('success1')
+
     }
+    init(json.length,
+        soldiers1914.length,
+        soldiers1915.length,
+        soldiers1916.length,
+        soldiers1917.length,
+        soldiers1918.length);
   }
 
   else {
@@ -287,5 +120,222 @@ req.onreadystatechange = function(){
 req.open('GET', '/static/soldiers.json', true);
 req.send();
 
+function insertEntry(array, entry){
+  array.push(entry);
+}
+
+function poppys(){
+  console.log(allSoldiers.length)
+
+  if(soldiersAll == 1){
+    return allSoldiers.length;
+  }
+}
+
+function soldierDetails(selectedArray){
+
+  var infobox = document.createElement('div');
+  infobox.className = 'soldierInfo';
+  document.getElementById('soldier').appendChild(infobox);
+
+  var info = document.createElement('tr');
+  row.innerHTML += '<td>' + '<h2>' +  selectedArray[i][0] + '  ' + selectedArray[i][1] + '</h2>' + '</td>';
+  row.innerHTML += '<td>' + 'Age :' + '  ' +  selectedArray[i][2] +  '</td>';
+  row.innerHTML += '<td>' + 'D.O.D :' + '  ' +  selectedArray[i][3] +  '</td>';
+  row.innerHTML += '<td>' + 'rank :' + '  ' +   selectedArray[i][4] +  '</td>';
+  row.innerHTML += '<td>' +  selectedArray[i][5] + '</td>';
+
+  document.getElementById('infobox').appendChild(info);
+
+}
+
+//three.js
+
+    import * as THREE from './build/three.module.js';
+    import Stats from './jsm/libs/stats.module.js';
+    import { GUI } from './jsm/libs/dat.gui.module.js';
+
+    var container, stats;
+    var camera, scene, renderer;
+    var radius = 100, theta = 0;
+
+    //init();
+    animate();
+
+    function init(all, len1914, len1915, len1916, len1917, len1918) {
+      container = document.getElementById( 'soldiers' );
+
+      camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+      camera.layers.enable( 0 ); // enabled by default
+      camera.layers.enable( 1 );
+      camera.layers.enable( 2 );
+      camera.layers.enable( 3 );
+      camera.layers.enable( 4 );
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color( 0x151010 );
+      var light = new THREE.PointLight( 0xffffff, 1 );
+      light.layers.enable( 0 );
+      light.layers.enable( 1 );
+      light.layers.enable( 2 );
+      light.layers.enable( 3 );
+      light.layers.enable( 4 );
+      scene.add( camera );
+      camera.add( light );
+
+      var colors = [ 0xff0000, 0xff1100, 0xDD0000, 0xEE00F0, 0xBF0000 ];
+      var geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
+      var layer;
+
+      for ( var i = 0; i < len1914; i ++ ) {
+        layer = 0;
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = Math.random() + 0.5;
+        object.scale.y = Math.random() + 0.5;
+        object.scale.z = Math.random() + 0.5;
+        object.layers.set( layer );
+        scene.add( object );
+      }
+
+      for ( var i = 0; i < len1915; i ++ ) {
+        layer = 1;
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = Math.random() + 0.5;
+        object.scale.y = Math.random() + 0.5;
+        object.scale.z = Math.random() + 0.5;
+        object.layers.set( layer );
+        scene.add( object );
+      }
+
+      for ( var i = 0; i < len1916; i ++ ) {
+        layer = 2;
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = Math.random() + 0.5;
+        object.scale.y = Math.random() + 0.5;
+        object.scale.z = Math.random() + 0.5;
+        object.layers.set( layer );
+        scene.add( object );
+      }
+
+      for ( var i = 0; i < len1917; i ++ ) {
+        layer = 3;
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = Math.random() + 0.5;
+        object.scale.y = Math.random() + 0.5;
+        object.scale.z = Math.random() + 0.5;
+        object.layers.set( layer );
+        scene.add( object );
+      }
+
+      for ( var i = 0; i < len1918; i ++ ) {
+        layer = 4;
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = Math.random() + 0.5;
+        object.scale.y = Math.random() + 0.5;
+        object.scale.z = Math.random() + 0.5;
+        object.layers.set( layer );
+        scene.add( object );
+      }
+
+      renderer = new THREE.WebGLRenderer();
+      renderer.setPixelRatio( window.devicePixelRatio );
+      renderer.setSize( window.innerWidth, window.innerHeight );
+      container.appendChild( renderer.domElement );
+      stats = new Stats();
+      container.appendChild( stats.dom );
+
+      var layers = {
+        '1914': function() {
+          camera.layers.toggle( 0 );
+        },
+        '1915': function() {
+          camera.layers.toggle( 1 );
+        },
+        '1916': function() {
+          camera.layers.toggle( 2 );
+        },
+        '1917': function() {
+          camera.layers.toggle( 3 );
+        },
+        '1918': function() {
+          camera.layers.toggle( 4 );
+        },
+
+        'enable all': function() {
+          camera.layers.enableAll();
+        },
+        'disable all': function() {
+          camera.layers.disableAll();
+        }
+      };
+      //
+      // Init gui
+      var gui = new GUI();
+      gui.add( layers, '1914' );
+      gui.add( layers, '1915' );
+      gui.add( layers, '1916' );
+      gui.add( layers, '1917' );
+      gui.add( layers, '1918' );
+      gui.add( layers, 'enable all' );
+      gui.add( layers, 'disable all' );
+      window.addEventListener( 'resize', onWindowResize, false );
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+    }
+
+    //
+    function animate() {
+      requestAnimationFrame( animate );
+      render();
+      stats.update();
+    }
+
+    function render() {
+      theta += 0.1;
+      camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+      camera.lookAt( scene.position );
+      renderer.render( scene, camera );
+    }
+
+
+
+//for showing data, make three seperate renders of three.js and then call each one depending on true or false of class
+
 console.log(allSoldiers)
 console.log(soldiers1914)
+console.log(allSoldiers.length)
