@@ -161,109 +161,16 @@ function soldierDetails(selectedArray){
 //three.js
 
     import * as THREE from './build/three.module.js';
-    import { GUI } from './jsm/libs/dat.gui.module.js';
     import Stats from './jsm/libs/stats.module.js';
+    import { GUI } from './jsm/libs/dat.gui.module.js';
     import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
-    import { FlyControls } from './jsm/controls/FlyControls.js';
 
     var container, stats;
-    var controls;
     var camera, scene, renderer;
     var radius = 100, theta = 0;
-    var clock = new THREE.Clock();
 
-function sceneSetup(){
-
-    container = document.getElementById( 'soldiers' );
-    camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 15000 );
-    camera.position.z = 150;
-    controls = new FlyControls( camera );
-
-    controls.movementSpeed = 2500;
-    controls.domElement = container;
-    controls.rollSpeed = Math.PI / 60;
-    controls.autoForward = false;
-    controls.dragToLook = false;
-
-    camera.layers.enable( 0 ); // enabled by default
-    camera.layers.enable( 1 );
-    camera.layers.enable( 2 );
-    camera.layers.enable( 3 );
-    camera.layers.enable( 4 );
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color( 0x0c0c0c );
-    var light = new THREE.PointLight( 0xffffff, 10 );
-    light.layers.enable( 0 );
-    light.layers.enable( 1 );
-    light.layers.enable( 2 );
-    light.layers.enable( 3 );
-    light.layers.enable( 4 );
-
-
-
-    scene.add( camera );
-    camera.add( light );
-}
-
-function layerSetup(){
-    var layers = {
-      '1914': function() {
-        camera.layers.enable( 0 );
-        camera.layers.disable( 1);
-        camera.layers.disable( 2);
-        camera.layers.disable( 3);
-        camera.layers.disable( 4);
-      },
-      '1915': function() {
-        camera.layers.enable( 1 );
-        camera.layers.disable( 0);
-        camera.layers.disable( 2);
-        camera.layers.disable( 3);
-        camera.layers.disable( 4);
-      },
-      '1916': function() {
-        camera.layers.enable( 2 );
-        camera.layers.disable( 1);
-        camera.layers.disable( 0);
-        camera.layers.disable( 3);
-        camera.layers.disable( 4);
-      },
-      '1917': function() {
-        camera.layers.enable( 3 );
-        camera.layers.disable( 1);
-        camera.layers.disable( 2);
-        camera.layers.disable( 0);
-        camera.layers.disable( 4);
-      },
-      '1918': function() {
-        camera.layers.enable( 4 );
-        camera.layers.disable( 1);
-        camera.layers.disable( 2);
-        camera.layers.disable( 3);
-        camera.layers.disable( 0);
-      },
-
-      'All Soldiers': function() {
-        camera.layers.enableAll();
-      },
-
-    };
-    //
-    // Init gui
-    var gui = new GUI();
-    gui.add( layers, '1914' );
-    gui.add( layers, '1915' );
-    gui.add( layers, '1916' );
-    gui.add( layers, '1917' );
-    gui.add( layers, '1918' );
-    gui.add( layers, 'All Soldiers' );
-
-}
     //init();
-    sceneSetup();
-    layerSetup();
     animate();
-
 
     function init(
         all,
@@ -271,14 +178,38 @@ function layerSetup(){
         len1915,
         len1916,
         len1917,
-        len1918,) {
+        len1918) {
 
+      container = document.getElementById( 'soldiers' );
+
+      camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 10000 );
+      camera.layers.enable( 0 ); // enabled by default
+      camera.layers.enable( 1 );
+      camera.layers.enable( 2 );
+      camera.layers.enable( 3 );
+      camera.layers.enable( 4 );
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color( 0x151010 );
+      var light = new THREE.PointLight( 0xffffff, 2 );
+      light.layers.enable( 0 );
+      light.layers.enable( 1 );
+      light.layers.enable( 2 );
+      light.layers.enable( 3 );
+      light.layers.enable( 4 );
+      scene.add( camera );
+      camera.add( light );
 
       var loader = new GLTFLoader();
 
       loader.load( './static/PoppyHead.glb', function ( gltf ) {
 
-        gltf.scene.scale.set(10,10,10); // scale here
+        gltf.scene.traverse( function ( child ) {
+          if ( child.isMesh ) {
+            //  child.geometry.center(); // center here
+            }
+          });
+
+        gltf.scene.scale.set(20,20,20); // scale here
       	scene.add( gltf.scene );
 
 
@@ -290,106 +221,153 @@ function layerSetup(){
 
 
       var colors = [ 0xff0000, 0xff1000, 0xDD0000, 0xEE0000, 0xBF0000 ];
-      var geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
+      var geometry = new THREE.BoxBufferGeometry( 1, 1, 1 );
       var layer;
 
 
       for ( var i = 0; i < len1914.length; i ++ ) {
-
-          var sizeage14 = len1914[i][2];
-           layer = 0;
-
-        loader.load( './static/PoppyHead.glb', function ( gltf ) {
-          var object = gltf.scene; // scale here
-          object.position.set(Math.random() * 200 - 100,Math.random() * 200 - 100,Math.random() * 200 - 100);
-          object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
-          object.scale.set(sizeage14/2, sizeage14/2,sizeage14/2);
-          object.layers.set( layer );
-          scene.add( object );
-
-
-
-      });
+        layer = 0;
+        var sizeage14 = len1914[i][2];
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = sizeage14/20;
+        object.scale.y = sizeage14/20;
+        object.scale.z = sizeage14/20;
+        object.layers.set( layer );
+        scene.add( object );
       }
 
       for ( var i = 0; i < len1915.length; i ++ ) {
-
-        var sizeage15 = len1915[i][2];
         layer = 1;
-
-        loader.load( './static/PoppyHead.glb', function ( gltf ) {
-
-          var object = gltf.scene; // scale here
-          object.position.set(Math.random() * 1800 - 900,Math.random() * 1900 - 900,Math.random() * 1800 - 900);
-          object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
-          object.scale.set(sizeage15/2, sizeage15/2,sizeage15/2);
-          object.layers.set( layer );
-          scene.add( object );
-
-
-      });
+        var sizeage15 = len1915[i][2];
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = sizeage15;
+        object.scale.y = sizeage15;
+        object.scale.z = sizeage15;
+        object.layers.set( layer );
+        scene.add( object );
       }
 
       for ( var i = 0; i < len1916.length; i ++ ) {
-
+        layer = 2;
         var sizeage16 = len1916[i][2];
-
-        loader.load( './static/PoppyHead.glb', function ( gltf ) {
-          layer = 2;
-          var object = gltf.scene; // scale here
-          object.position.set(Math.random() * 2500 - 1250,Math.random() * 2500 - 1250,Math.random() * 2500 - 1250);
-          object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
-          object.scale.set(sizeage16/2, sizeage16/2,sizeage16/2);
-          object.layers.set( layer );
-          scene.add( object );
-
-
-      });
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = sizeage16;
+        object.scale.y = sizeage16;
+        object.scale.z = sizeage16;
+        object.layers.set( layer );
+        scene.add( object );
       }
 
       for ( var i = 0; i < len1917.length; i ++ ) {
-
+        layer = 3;
         var sizeage17 = len1917[i][2];
-
-        loader.load( './static/PoppyHead.glb', function ( gltf ) {
-
-          var object = gltf.scene;
-          object.position.set(Math.random() * 3000 - 1500, Math.random() * 3000 - 1500, Math.random() * 3000 - 1500);
-          object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
-          object.scale.set(sizeage17/2, sizeage17/2,sizeage17/2);
-          object.layers.set( layer );
-          scene.add( object );
-
-
-      });
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = sizeage17;
+        object.scale.y = sizeage17;
+        object.scale.z = sizeage17;
+        object.layers.set( layer );
+        scene.add( object );
       }
 
-
       for ( var i = 0; i < len1918.length; i ++ ) {
-
-          var sizeage18 = len1918[i][2]; //this can't get two i dont know why
-          var layer = 4;
-
-          loader.load( './static/PoppyHead.glb', function ( gltf ) {
-
-            var object = gltf.scene; // scale here
-            object.position.set(Math.random() * 3940 - 1920,Math.random() * 3940 - 1920,Math.random() * 3940 - 1920);
-            object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
-            object.scale.set(sizeage18/2, sizeage18/2,sizeage18/2);
-            object.layers.set( layer );
-            scene.add( object );
-
-
-
-        });
+        var sizeage18 = len1918[i][2];
+        layer = 4;
+        var object = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: colors[ layer ] } ) );
+        object.position.x = Math.random() * 800 - 400;
+        object.position.y = Math.random() * 800 - 400;
+        object.position.z = Math.random() * 800 - 400;
+        object.rotation.x = Math.random() * 2 * Math.PI;
+        object.rotation.y = Math.random() * 2 * Math.PI;
+        object.rotation.z = Math.random() * 2 * Math.PI;
+        object.scale.x = sizeage18;
+        object.scale.y = sizeage18;
+        object.scale.z = sizeage18;
+        object.layers.set( layer );
+        scene.add( object );
       }
 
       renderer = new THREE.WebGLRenderer();
       renderer.setPixelRatio( window.devicePixelRatio );
       renderer.setSize( window.innerWidth, window.innerHeight );
       container.appendChild( renderer.domElement );
-    //  container.appendChild( stats.dom );
+      stats = new Stats();
+      container.appendChild( stats.dom );
 
+      var layers = {
+        '1914': function() {
+          camera.layers.enable( 0 );
+          camera.layers.disable( 1);
+          camera.layers.disable( 2);
+          camera.layers.disable( 3);
+          camera.layers.disable( 4);
+        },
+        '1915': function() {
+          camera.layers.enable( 1 );
+          camera.layers.disable( 0);
+          camera.layers.disable( 2);
+          camera.layers.disable( 3);
+          camera.layers.disable( 4);
+        },
+        '1916': function() {
+          camera.layers.enable( 2 );
+          camera.layers.disable( 1);
+          camera.layers.disable( 0);
+          camera.layers.disable( 3);
+          camera.layers.disable( 4);
+        },
+        '1917': function() {
+          camera.layers.enable( 3 );
+          camera.layers.disable( 1);
+          camera.layers.disable( 2);
+          camera.layers.disable( 0);
+          camera.layers.disable( 4);
+        },
+        '1918': function() {
+          camera.layers.enable( 4 );
+          camera.layers.disable( 1);
+          camera.layers.disable( 2);
+          camera.layers.disable( 3);
+          camera.layers.disable( 0);
+        },
+
+        'All Soldiers': function() {
+          camera.layers.enableAll();
+        },
+
+      };
+      //
+      // Init gui
+      var gui = new GUI();
+      gui.add( layers, '1914' );
+      gui.add( layers, '1915' );
+      gui.add( layers, '1916' );
+      gui.add( layers, '1917' );
+      gui.add( layers, '1918' );
+      gui.add( layers, 'All Soldiers' );
       //window.addEventListener( 'resize', onWindowResize, false );
     }
 
@@ -399,17 +377,11 @@ function layerSetup(){
       renderer.setSize( window.innerWidth, window.innerHeight );
     }
 
-    function render() {
-        var delta = clock.getDelta();
-        controls.update( delta );
-        renderer.render( scene, camera );
-    }
-
-
     //
     function animate() {
       requestAnimationFrame( animate );
       render();
+      stats.update();
     }
 
     function sort1914() {
@@ -464,8 +436,11 @@ function layerSetup(){
       sort1918();
     });
 
-
-
-
-
-//for showing data, make three seperate renders of three.js and then call each one depending on true or false of class
+    function render() {
+      theta += 0.1;
+      camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.y = radius * Math.sin( THREE.Math.degToRad( theta ) );
+      camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
+      camera.lookAt( scene.position );
+      renderer.render( scene, camera );
+    }
