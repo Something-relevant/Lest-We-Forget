@@ -1,4 +1,4 @@
-//for showing data, make three seperate renders of three.js and then call each one depending on true or false of class
+
 var req = new XMLHttpRequest(); // Makes AJAX Possible
 var soldiersAge = 0;
 req.onreadystatechange = function(){
@@ -120,7 +120,7 @@ function insertEntry(array, entry){
 }
 
 function poppys(array){
-  
+
 }
 
 function soldierDetails(selectedArray){

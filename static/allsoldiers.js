@@ -1,3 +1,13 @@
+//for showing data, make three seperate renders of three.js and
+// then call each one depending on true or false of class
+var soldiersAll = 1
+var dead1914 = 0;
+var dead1915 = 0;
+var dead1916 = 0;
+var dead1917 = 0;
+var dead1918 = 0;
+
+
 var soldiers1914 = [];
 var soldiers1915 = [];
 var soldiers1916 = [];
@@ -92,7 +102,7 @@ req.onreadystatechange = function(){
         json[i].rank,
         json[i].additionalinformation,
       ]);
-        //console.log('success1')
+        console.log('success1')
 
     }
 
@@ -151,13 +161,8 @@ function soldierDetails(selectedArray){
 
 //three.js
 
-    console.log("Every Poppy is in place of a NZ soldier who died in WW1");
-    console.log("The Size of the poppies represent their age");
-    console.log("The smaller the flower, the shorter their life was");
-    console.log("The flowers in the centre are soldiers who died first");
-    console.log("The Camera stops once WW1 stopped");
-
     import * as THREE from './build/three.module.js';
+    import { GUI } from './jsm/libs/dat.gui.module.js';
     import Stats from './jsm/libs/stats.module.js';
     import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
     import { OrbitControls } from './jsm/controls/OrbitControls.js';
@@ -175,9 +180,7 @@ function sceneSetup(){
 
     container = document.getElementById( 'soldiers' );
     camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 15000 );
-    camera.position.z = 10;
-    camera.position.x = 0;
-    camera.position.y = 0;
+    camera.position.z = 150;
 
     camera.layers.enable( 0 ); // enabled by default
     camera.layers.enable( 1 );
@@ -186,7 +189,7 @@ function sceneSetup(){
     camera.layers.enable( 4 );
     camera.layers.enable( 5 );
     scene.background = new THREE.Color( 0x0c0c0c );
-    var light = new THREE.PointLight( 0xeeeeff, 7 );
+    var light = new THREE.PointLight( 0xffffff, 10 );
     light.layers.enable( 0 );
     light.layers.enable( 1 );
     light.layers.enable( 2 );
@@ -245,6 +248,15 @@ function layerSetup(){
       },
 
     };
+    //
+    // Init gui
+    var gui = new GUI();
+    gui.add( layers, '1914' );
+    gui.add( layers, '1915' );
+    gui.add( layers, '1916' );
+    gui.add( layers, '1917' );
+    gui.add( layers, '1918' );
+    gui.add( layers, 'All Soldiers' );
 
 }
 
@@ -252,13 +264,14 @@ function playercontrols(){
   controls = new OrbitControls( camera, renderer.domElement );
 
     //controls.addEventListener( 'change', render ); // call this only in static scenes (i.e., if there is no animation loop)
-  controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled
-  controls.dampingFactor = 0.05;
-  controls.zoomSpeed = 0.25;
+  controls.enableDamping = false; // an animation loop is required when either damping or auto-rotation are enabled
+  controls.dampingFactor = 0.15;
+  controls.zoomSpeed = 0.75;
   controls.screenSpacePanning = false;
-  controls.minDistance = 0;
-  controls.maxDistance = 4000;
-  controls.maxPolarAngle = 2;
+  controls.minDistance = -2000;
+  controls.maxDistance = 4500;
+  controls.maxPolarAngle = Math.PI / 2;
+  console.log(camera.position.z)
 
 }
     //init();
@@ -280,6 +293,21 @@ function playercontrols(){
 
       var loader = new GLTFLoader();
 
+      loader.load( './static/PoppyHead.glb', function ( gltf ) {
+
+        gltf.scene.scale.set(10,10,10); // scale here
+      	scene.add( gltf.scene );
+
+
+      }, undefined, function ( error ) {
+
+      	console.error( error );
+
+      } );
+
+
+      var colors = [ 0xff0000, 0xff1000, 0xDD0000, 0xEE0000, 0xBF0000 ];
+      var geometry = new THREE.BoxBufferGeometry( 20, 20, 20 );
       var layer;
 
 
@@ -376,7 +404,91 @@ function playercontrols(){
 
 // NZ soldiers that are not in the database
 
+//1914 = 14 killed - existing 1914 above
+      for ( var i = 0; i < 2; i ++ ) {
 
+
+          var layer = 1;
+
+          loader.load( './static/PoppyHead.glb', function ( gltf ) {
+
+            var object = gltf.scene; // scale here
+            object.position.set(Math.random() * 1800 - 900,Math.random() * 1900 - 900,Math.random() * 1800 - 900);
+            object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
+            object.scale.set( Math.random(16,47)/2,Math.random(16,47)/2, Math.random(16,47)/2 );
+            object.layers.set( layer );
+            scene.add( object );
+
+        });
+      }
+// 1915 total of 2876 - 1915 above
+      for ( var i = 0; i < 2800; i ++ ) {
+
+
+          var layer = 1;
+
+          loader.load( './static/PoppyHead.glb', function ( gltf ) {
+
+            var object = gltf.scene; // scale here
+            object.position.set(Math.random() * 1800 - 900,Math.random() * 1900 - 900,Math.random() * 1800 - 900);
+            object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
+            object.scale.set( Math.random(16,47)/2,Math.random(16,47)/2, Math.random(16,47)/2 );
+            object.layers.set( layer );
+            scene.add( object );
+
+        });
+      }
+
+//1916 somme offensive =  3552 dead -  above
+      for ( var i = 0; i < 3376; i ++ ) {
+
+          var layer = 2;
+
+          loader.load( './static/PoppyHead.glb', function ( gltf ) {
+
+            var object = gltf.scene; // scale here
+            object.position.set(Math.random() * 2500 - 1250,Math.random() * 2500 - 1250,Math.random() * 2500 - 1250);
+            object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
+            object.scale.set( Math.random(16,47)/2,Math.random(16,47)/2, Math.random(16,47)/2 );
+            object.layers.set( layer );
+            scene.add( object );
+
+        });
+      }
+
+//1917 total of 5535 killed - above
+      for ( var i = 0; i < 5386; i ++ ) {
+
+    var layer = 3;
+
+    loader.load( './static/PoppyHead.glb', function ( gltf ) {
+
+      var object = gltf.scene; // scale here
+      object.position.set(Math.random() * 3000 - 1500, Math.random() * 3000 - 1500, Math.random() * 3000 - 1500);
+      object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
+      object.scale.set( Math.random(16,47)/2,Math.random(16,47)/2, Math.random(16,47)/2 );
+      object.layers.set( layer );
+      scene.add( object );
+
+  });
+}
+
+//1918 total pf 5478 - above
+      for ( var i = 0; i < 4677; i ++ ) {
+
+var layer = 4;
+
+loader.load( './static/PoppyHead.glb', function ( gltf ) {
+
+var object = gltf.scene; // scale here
+object.position.set(Math.random() * 3940 - 1920,Math.random() * 3940 - 1920,Math.random() * 3940 - 1920);
+object.rotation.set(Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI,Math.random() * 2 * Math.PI);
+object.scale.set( Math.random(16,47)/2,Math.random(16,47)/2, Math.random(16,47)/2 );
+object.layers.set( layer );
+scene.add( object );
+
+});
+}
 
 
 
@@ -409,11 +521,60 @@ function playercontrols(){
       render();
     }
 
+    function sort1914() {
+      camera.layers.enable( 0 );
+      camera.layers.disable( 1);
+      camera.layers.disable( 2);
+      camera.layers.disable( 3);
+      camera.layers.disable( 4);
+    }
+    function sort1915() {
+      camera.layers.enable( 1 );
+      camera.layers.disable( 0);
+      camera.layers.disable( 2);
+      camera.layers.disable( 3);
+      camera.layers.disable( 4);
+    }
+    function sort1916() {
+      camera.layers.enable( 2 );
+      camera.layers.disable( 1);
+      camera.layers.disable( 0);
+      camera.layers.disable( 3);
+      camera.layers.disable( 4);
+    }
+    function sort1917() {
+      camera.layers.enable( 3 );
+      camera.layers.disable( 1);
+      camera.layers.disable( 2);
+      camera.layers.disable( 0);
+      camera.layers.disable( 4);
+    }
+    function sort1918() {
+      camera.layers.enable( 4 );
+      camera.layers.disable( 1);
+      camera.layers.disable( 2);
+      camera.layers.disable( 3);
+      camera.layers.disable( 0);
+    }
+
+    document.getElementByClass('sort1914').addEventListener('click', function orginise1914(){
+      sort1914();
+    });
+    document.getElementByClass('sort1915').addEventListener('click', function orginise1915(){
+      sort1915();
+    });
+    document.getElementByClass('sort1916').addEventListener('click', function orginise1916(){
+      sort1916();
+    });
+    document.getElementByClass('sort1917').addEventListener('click', function orginise1917(){
+      sort1917();
+    });
+    document.getElementByClass('sort1918').addEventListener('click', function orginise1918(){
+      sort1918();
+    });
 
 
-//console.log(camera.position.x)
-//console.log(camera.position.y)
-//console.log(camera.position.z)
+
 
 
 //for showing data, make three seperate renders of three.js and then call each one depending on true or false of class

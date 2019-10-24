@@ -20,10 +20,9 @@
 </div>-->
     </div>
 
-    <div class='container'>
+    <div id='container'>
       <div id="Header">
         <h1 class='title'>Lest We Forget<br/></h1>
-        <h2><a class="sort1914">1914</a> - <a id="sort1915">1915</a> - <a id="sort1916">1916</a> - <a id="1917">1917</a> - <a id="1918">1918</a><h2>
       </div>
     </div>
 
@@ -41,7 +40,25 @@
     -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/109/three.min.js"></script>
     <script src="{{ url_for('static', filename='three.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='soldiers.js') }}" type="module"></script> 
+    <script src="{{ url_for('static', filename='allsoldiers.js') }}" type="module"></script>
+    <script>
+
+          function removeFadeOut( el, speed ) {
+          var seconds = speed/1000;
+          el.style.transition = "opacity "+seconds+"s ease";
+
+          el.style.opacity = 0;
+          setTimeout(function() {
+              el.parentNode.removeChild(el);
+          }, speed);
+        }
+
+
+          document.getElementById('container').addEventListener('click', function fadetitle(){
+            removeFadeOut(document.getElementById('container'), 2500);
+          })
+
+    </script>
     <!--   <script src="{{ url_for('static', filename='sortingWorks.js') }}" type="module"></script>-->
 
 

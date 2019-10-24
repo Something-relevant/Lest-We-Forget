@@ -6,12 +6,12 @@
 }
 
 h1, h2, h3 {
-  font-family: 'Rufina',serif;
+  font-family: 'Rufina', serif;
   text-align: center;
 }
 
 h1{
-font-size: 26px;
+font-size: 36px;
 }
 
 h2{
@@ -19,7 +19,8 @@ font-size: 22.36px;
 }
 
 .title {
-  margin-top:25px;
+  height: 35%;
+  margin-top:30px;
 }
 
 .subtitles {
@@ -46,21 +47,22 @@ canvas{
   height: 100%;
 }
 
-#container{
+.container{
   position:fixed;
-  height:100px;
-  width:100%;
+  height:200px;
+  width:100%
 }
 
 #Header{
+  width: 420px;
+  height: 145px;
+  border: 3px ridge white;
   justify-content: center;
-  align-items: center;
   margin: 15px auto;
-  width: 100%;
-  height: 80px;
-  border: 2px ridge white;
-  background-color: #0c0c0c80;
+  background-color: #0c0c0c;
 }
+
+
 
 #soldiers{
   width: 100%;
@@ -98,15 +100,13 @@ canvas{
     /*width: fit-content*/
   }
 
-  #container{
-    position:fixed;
-    height:200px;
-    width:100%
+  #Header{
+    width: 100%;
+
   }
 
-
   h1{
-  font-size: 24px;
+  font-size: 30px;
   }
 
   h2{
@@ -114,32 +114,10 @@ canvas{
   }
 
   .title {
-    height: 15%;
-    margin-top:25px;
+    height: 35%;
+    margin-top:30px;
   }
   .subtitles a {
     padding-right:10px;
   }
-}
-
-@media only screen and (min-width: 401px) {
-  body {
-    /*width: fit-content*/
-  }
-
-  #container{
-    top:40%;
-  }
-
-  #Header{
-    width: 320px;
-    height: 80px;
-    margin: 15px auto;
-    background-color: #0c0c0c90;
-
-
-  }
-
-
-
 }
