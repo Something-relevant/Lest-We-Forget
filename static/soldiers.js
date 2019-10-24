@@ -151,11 +151,6 @@ function soldierDetails(selectedArray){
 
 //three.js
 
-    console.log("Every Poppy is in place of a NZ soldier who died in WW1");
-    console.log("The Size of the poppies represent their age");
-    console.log("The smaller the flower, the shorter their life was");
-    console.log("The flowers in the centre are soldiers who died first");
-    console.log("The Camera stops once WW1 stopped");
 
     import * as THREE from './build/three.module.js';
     import Stats from './jsm/libs/stats.module.js';
@@ -388,6 +383,22 @@ function playercontrols(){
     //  container.appendChild( stats.dom );
 
       //window.addEventListener( 'resize', onWindowResize, false );
+      var l = Math.round(Math.random() * 1436);
+      var rememberme1name = allSoldiers[l][0];
+      var rememberme2name = allSoldiers[l][1];
+      var remembermeAge = allSoldiers[l][2];
+      var remembermeDate = allSoldiers[l][3];
+      var remembermeRank = allSoldiers[l][4];
+      var remembermeInfo = allSoldiers[l][5];
+
+      console.log("Every Poppy is in place of a NZ soldier who died in WW1");
+      console.log("The Size of the poppies represent their age");
+      console.log("The smaller the flower, the shorter their life was");
+      console.log("The flowers in the centre are soldiers who died first");
+      console.log("The Camera stops once WW1 stopped");
+      console.log("We Remeber " + remembermeAge + " "  + "year old" + " " +  remembermeRank + " " + rememberme1name + " " + rememberme2name );
+      console.log("Who died on" + " " + remembermeDate);
+      console.log(remembermeInfo);
     }
 
     function onWindowResize() {
@@ -414,6 +425,3 @@ function playercontrols(){
 //console.log(camera.position.x)
 //console.log(camera.position.y)
 //console.log(camera.position.z)
-
-
-//for showing data, make three seperate renders of three.js and then call each one depending on true or false of class
